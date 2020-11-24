@@ -1,0 +1,6 @@
+<launch>
+  <node name="movement_actuator" type="move.py" pkg="adeeptcar" output="screen" />
+  <node name="ultrasonic_sensor" type="ultrasonic.py" pkg="adeeptcar" output="screen" />
+  <node name="led_actuator" type="led.py" pkg="adeeptcar" output="screen" />
+  <node name="controller" type="controller.py" pkg="adeeptcar" output="screen" />
+</launch>
