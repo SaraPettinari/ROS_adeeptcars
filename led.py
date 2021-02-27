@@ -6,6 +6,9 @@ import time
 import RPi.GPIO as GPIO
 import threading
 
+import rclpy
+from std_msgs.msg import ColorRGBA
+
 # LED strip configuration:
 LED_COUNT = 16      # Number of LED pixels.
 LED_PIN = 12      # GPIO pin connected to the pixels (18 uses PWM!).
@@ -23,14 +26,17 @@ GPIO.setup(6, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
 
 # Get colors from LED node --> RGB message
-parser = argparse.ArgumentParser()
-parser.add_argument("RED", type=float, help="value of red color")
-parser.add_argument("GREEN", type=float, help="value of green color")
-parser.add_argument("BLUE", type=float, help="value of blue color")
+# parser = argparse.ArgumentParser()
+# parser.add_argument("RED", type=float, help="value of red color")
+# parser.add_argument("GREEN", type=float, help="value of green color")
+# parser.add_argument("BLUE", type=float, help="value of blue color")
 
-args = parser.parse_args()
+# args = parser.parse_args()
 
+lightMode = 'none'		#'none' 'police' 'breath'
 
+def setup():
+	print('--> LED node')
 
 def setColor(red, green, blue):
 	color = Color(red, green, blue)
@@ -38,15 +44,19 @@ def setColor(red, green, blue):
 		strip.setPixelColor(i, color)
 		strip.show()
 
-# Main program:
-if __name__ == '__main__':
-	if args.RED and args.GREEN and args.BLUE > 1.0:
-		print('ERROR: maximum value is 1.0')
-		sys.exit(1)
-	else:
-		RED = int(float(args.RED)*255)
-		GREEN = int(float(args.GREEN)*255)
-		BLUE = int(float(args.BLUE)*255)
+
+def manageLed(colorMsg):
+	R = colorMsg.r
+	G = colorMsg.g
+	B = colorMsg.b
+	
+	# if R or G or B > 1.0:
+		# print('ERROR: maximum value is 1.0')
+		# sys.exit(1)
+	# else:
+	RED = int(float(R)*255)
+	GREEN = int(float(G)*255)
+	BLUE = int(float(B)*255)
 	
 	# Create NeoPixel object with appropriate configuration.
 	strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ,
@@ -63,3 +73,19 @@ if __name__ == '__main__':
 	except KeyboardInterrupt:
 		setColor(0, 0, 0) 
 		__flag.clear()
+
+
+if __name__ == '__main__':
+	try:
+		setup()
+	except KeyboardInterrupt:
+		exit()
+	
+
+
+rclpy.init()
+node = rclpy.create_node('led_actuator')
+node.create_subscription(ColorRGBA, '/led_RGB', manageLed, 10)
+
+rclpy.spin(node)
+print('Shutting down: stopping LEDs')

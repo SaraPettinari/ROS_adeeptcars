@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import time
 import RPi.GPIO as GPIO
-import rospy
+import rclpy
+from rclpy.node import Node
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
@@ -58,6 +59,8 @@ def setup():#Motor initialization
 
 
 def motor_left(status, direction, speed):#Motor 2 positive and negative rotation
+	if speed > 100: #to avoid problems with duty cycle
+		speed = 100
 	if status == 0: # stop
 		GPIO.output(Motor_B_Pin1, GPIO.LOW)
 		GPIO.output(Motor_B_Pin2, GPIO.LOW)
@@ -76,6 +79,8 @@ def motor_left(status, direction, speed):#Motor 2 positive and negative rotation
 
 
 def motor_right(status, direction, speed):#Motor 1 positive and negative rotation
+	if speed > 100: #to avoid problems with duty cycle
+		speed = 100
 	if status == 0: # stop
 		GPIO.output(Motor_A_Pin1, GPIO.LOW)
 		GPIO.output(Motor_A_Pin2, GPIO.LOW)
@@ -163,7 +168,6 @@ def destroy():
 if __name__ == '__main__':
 	try:
 		speed_set = 100
-		setup()
 		motor_left(0, 0, speed_set)
 		motor_right(0, 0, speed_set)
 		time.sleep(1)
@@ -171,10 +175,12 @@ if __name__ == '__main__':
 		destroy()
 		exit()
 
-rospy.init_node('movement_actuator')
-rospy.Subscriber('/cmd_vel', Twist, move)
+setup()
+rclpy.init()
+node = rclpy.create_node('movement_actuator')
+node.create_subscription(Twist, '/cmd_vel', move, 10)
 
-rospy.spin()
+rclpy.spin(node)
 print('Shutting down: stopping motors')
 motorStop()
 GPIO.cleanup()
