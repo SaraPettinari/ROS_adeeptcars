@@ -57,6 +57,6 @@ def setup():
 if __name__ == '__main__':
 	setup()
 
-setup()
+#setup()
 print('Shutting down: stopping ultrasonic sensor')
 GPIO.cleanup()

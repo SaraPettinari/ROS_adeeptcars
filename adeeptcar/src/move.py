@@ -3,7 +3,6 @@ import time
 import RPi.GPIO as GPIO
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
 # motor_EN_A: Pin7  |  motor_EN_B: Pin11
@@ -57,6 +56,20 @@ def setup():#Motor initialization
 	except:
 		pass
 
+	# initialization of ROS subscriber
+	rclpy.init()
+	node = rclpy.create_node('movement_actuator')
+	node.create_subscription(Twist, '/cmd_vel', move, 10)
+
+	rclpy.spin(node)
+	
+	if KeyboardInterrupt:
+		node.destroy_node()
+		rclpy.shutdown()
+		print('Shutting down: stopping motors')
+		motorStop()
+		GPIO.cleanup()
+
 
 def motor_left(status, direction, speed):#Motor 2 positive and negative rotation
 	if speed > 100: #to avoid problems with duty cycle
@@ -98,7 +111,7 @@ def motor_right(status, direction, speed):#Motor 1 positive and negative rotatio
 			pwm_A.ChangeDutyCycle(speed)
 	return direction
 
-
+# ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 1.8}}"
 def move(twistMsg, radius=0.6):   # 0 < radius <= 1  
 	turn = ''
 	lin_vel = 0
@@ -166,21 +179,6 @@ def destroy():
 
 
 if __name__ == '__main__':
-	try:
-		speed_set = 100
-		motor_left(0, 0, speed_set)
-		motor_right(0, 0, speed_set)
-		time.sleep(1)
-	except KeyboardInterrupt:
-		destroy()
-		exit()
+	setup()
 
-setup()
-rclpy.init()
-node = rclpy.create_node('movement_actuator')
-node.create_subscription(Twist, '/cmd_vel', move, 10)
-
-rclpy.spin(node)
-print('Shutting down: stopping motors')
-motorStop()
-GPIO.cleanup()
+#setup()
