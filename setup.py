@@ -23,7 +23,8 @@ setup(
         'console_scripts': [
             'controller = ros_engine.controller:setup',
             'move = ros_engine.move:setup',
-            'ultrasonic = ros_engine.ultrasonic:setup'
+            'led = ros_engine.led_controller:setup',
+            'ultrasonic = ros_engine.ultrasonic:setup',
         ],
     },
 )
