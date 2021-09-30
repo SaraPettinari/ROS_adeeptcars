@@ -1,10 +1,14 @@
 # Sub -> cambia status del led
 
+import pathlib
+import os
 import rclpy
 from std_msgs.msg import ColorRGBA
-from .hardware.led_strip import LedStrip
 
-led = LedStrip()
+
+# Get current working path
+path = str(pathlib.Path(__file__).parent.absolute())
+
 
 
 def setup():
@@ -26,7 +30,10 @@ def manageLed(colorMsg):
     G = colorMsg.g
     B = colorMsg.b
 
-    led.set_color(R, G, B)
+    cmd = 'python3 ' + path + '/hardware/led_strip.py ' + \
+        str(R) + ' ' + str(G) + ' ' + str(B)
+    print(path)
+    os.popen("sudo -S %s" % (cmd), 'w')
 
 
 if __name__ == '__main__':

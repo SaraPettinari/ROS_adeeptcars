@@ -20,7 +20,7 @@ def setup():
         dist = ultrasonic.check_distance()
         print(dist)
         distance_data.range = dist
-        node.get_logger().info('Publishing: "%s"' % distance_data.range)
+        #node.get_logger().info('Publishing: "%s"' % distance_data.range)
         distance_pub.publish(distance_data)
 
     timer_period = 0.5  # seconds

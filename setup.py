@@ -11,6 +11,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name, ['launch/system.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -22,6 +23,7 @@ setup(
     entry_points={
         'console_scripts': [
             'controller = ros_engine.controller:setup',
+            'controller_nothread = ros_engine.controller_nothread:setup',
             'move = ros_engine.move:setup',
             'led = ros_engine.led_controller:setup',
             'ultrasonic = ros_engine.ultrasonic:setup',
