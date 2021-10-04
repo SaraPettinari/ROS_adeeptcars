@@ -53,4 +53,3 @@ if __name__ == '__main__':
     strip.begin()
 
     set_color(RED, GREEN, BLUE)
-    print("Coloro")

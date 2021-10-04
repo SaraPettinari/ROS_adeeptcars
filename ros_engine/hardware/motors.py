@@ -68,7 +68,8 @@ class Motors:
                 self.pwm_B.start(0)
                 self.pwm_B.ChangeDutyCycle(speed)
 
-    def motor_right(self, status, direction, speed):  # Motor 1 positive and negative rotation
+    # Motor 1 positive and negative rotation
+    def motor_right(self, status, direction, speed):
         if speed > 100:  # to avoid problems with duty cycle
             speed = 100
         if status == 0:  # stop
@@ -87,3 +88,37 @@ class Motors:
                 self.pwm_A.start(0)
                 self.pwm_A.ChangeDutyCycle(speed)
         return direction
+
+    def movement(self, direction, turn, speed):
+        radius=0.6
+        if direction == 'forward':
+            if turn == 'right':
+                self.motor_left(0, self.left_backward, int(speed*radius))
+                self.motor_right(1, self.right_forward, speed)
+            elif turn == 'left':
+                self.motor_left(1, self.left_forward, speed)
+                self.motor_right(0, self.right_backward, int(speed*radius))
+            else:
+                self.motor_left(1, self.left_forward, speed)
+                self.motor_right(1, self.right_forward, speed)
+        elif direction == 'backward':
+            if turn == 'right':
+                self.motor_left(0, self.left_forward, int(speed*radius))
+                self.motor_right(1, self.right_backward, speed)
+            elif turn == 'left':
+                self.motor_left(1, self.left_backward, speed)
+                self.motor_right(0, self.right_forward, int(speed*radius))
+            else:
+                self.motor_left(1, self.left_backward, speed)
+                self.motor_right(1, self.right_backward, speed)
+        elif direction == 'no':
+            if turn == 'right':
+                self.motor_left(1, self.left_backward, speed)
+                self.motor_right(1, self.right_forward, speed)
+            elif turn == 'left':
+                self.motor_left(1, self.left_forward, speed)
+                self.motor_right(1, self.right_backward, speed)
+            else:
+                self.motor_stop()
+        else:
+            pass

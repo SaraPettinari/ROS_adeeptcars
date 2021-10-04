@@ -12,6 +12,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name, ['launch/system.launch.py']),
+        ('share/' + package_name, ['launch/no_control.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -27,6 +28,7 @@ setup(
             'move = ros_engine.move:setup',
             'led = ros_engine.led_controller:setup',
             'ultrasonic = ros_engine.ultrasonic:setup',
+            'line = ros_engine.findline:setup',
         ],
     },
 )

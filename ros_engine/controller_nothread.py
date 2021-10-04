@@ -7,14 +7,18 @@ import threading
 import rclpy
 from sensor_msgs.msg import Range
 from geometry_msgs.msg import Twist
-from std_msgs.msg import ColorRGBA
+from std_msgs.msg import ColorRGBA, Bool
 
 led = True
-
+line = False
 
 def getDistance(r: Range):
     print(str(r.range))
 
+
+def getLine(b : Bool):
+    global line
+    line = b.data
 
 def setup():
     rclpy.init()
@@ -22,6 +26,7 @@ def setup():
     velocity_pub = node.create_publisher(Twist, '/cmd_vel', 10)
     led_pub = node.create_publisher(ColorRGBA, '/led', 10)
     range_sub = node.create_subscription(Range, '/range', getDistance, 10)
+    line_sub = node.create_subscription(Bool, '/line_found', getLine, 10)
 
     def vel_callback():
         vel = Twist()
@@ -39,6 +44,7 @@ def setup():
         led = not led
 
         led_pub.publish(color)
+        
 
     timer_period = 0.5  # seconds
     timer1 = node.create_timer(timer_period, vel_callback)

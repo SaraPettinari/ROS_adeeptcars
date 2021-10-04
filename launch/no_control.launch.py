@@ -9,6 +9,4 @@ def generate_launch_description():
         Node(package=pkg, executable='move'),
         Node(package=pkg, executable='ultrasonic'),
         Node(package=pkg, executable='led'),
-        Node(package=pkg, executable='line'),
-        Node(package=pkg, executable='controller_nothread')
     ])
